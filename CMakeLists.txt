@@ -25,7 +25,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 # Developed and shipped against Qt 6.11 (kde-qt6-core24-sdk / kf6-core24).
-find_package(Qt6 6.4 REQUIRED COMPONENTS
+find_package(Qt6 6.2 REQUIRED COMPONENTS
     Core
     Gui
     Widgets
@@ -33,7 +33,7 @@ find_package(Qt6 6.4 REQUIRED COMPONENTS
     DBus
 )
 
-qt_standard_project_setup()
+# qt_standard_project_setup()
 
 # Dev builds against the kde-qt6-core24-sdk snap on a non-Ubuntu host: some
 # imported Qt targets export the SDK's generic /usr/include (Ubuntu glibc

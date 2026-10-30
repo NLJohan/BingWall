@@ -138,21 +138,22 @@ bool WallpaperSetter::setViaPortal(const QString &localPath,
 bool WallpaperSetter::setViaGsettings(const QString &localPath) {
   QProcess gsettings;
   gsettings.setProcessEnvironment(utils::childProcessEnvironment());
-  gsettings.start(QStringLiteral("gsettings"),
-                  {QStringLiteral("get"),
-                   QStringLiteral("org.gnome.desktop.interface"),
-                   QStringLiteral("color-scheme")});
-  gsettings.waitForFinished();
-  const QString colorScheme(gsettings.readAllStandardOutput().trimmed());
 
-  const QString pictureUri = colorScheme == QStringLiteral("'prefer-dark'")
-                                 ? QStringLiteral("picture-uri-dark")
-                                 : QStringLiteral("picture-uri");
+  const QString fileUri = QStringLiteral("file://") + localPath;
 
+  // 1. Set Light Mode wallpaper key
   gsettings.start(QStringLiteral("gsettings"),
                   {QStringLiteral("set"),
-                   QStringLiteral("org.gnome.desktop.background"), pictureUri,
-                   QStringLiteral("file://") + localPath});
+                   QStringLiteral("org.gnome.desktop.background"),
+                   QStringLiteral("picture-uri"), fileUri});
+  gsettings.waitForFinished();
+
+  // 2. Set Dark Mode wallpaper key
+  gsettings.start(QStringLiteral("gsettings"),
+                  {QStringLiteral("set"),
+                   QStringLiteral("org.gnome.desktop.background"),
+                   QStringLiteral("picture-uri-dark"), fileUri});
+
   if (!gsettings.waitForFinished() || gsettings.exitCode() != 0) {
     qWarning() << "GSETTINGS:Process failed:" << gsettings.errorString();
     return false;
